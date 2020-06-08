@@ -24,6 +24,7 @@ import io.airlift.event.client.EventClient;
 import io.airlift.http.server.HttpServerBinder.HttpResourceBinding;
 import io.airlift.node.NodeInfo;
 import io.airlift.security.pem.PemReader;
+import io.airlift.security.ssl.ReloadableSslContextFactory;
 import io.airlift.tracetoken.TraceTokenManager;
 import org.eclipse.jetty.http2.server.HTTP2CServerConnectionFactory;
 import org.eclipse.jetty.io.ConnectionStatistics;
@@ -50,7 +51,6 @@ import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.security.Constraint;
-import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.weakref.jmx.Managed;
 import org.weakref.jmx.Nested;
@@ -216,7 +216,7 @@ public class HttpServer
             HttpConfiguration httpsConfiguration = new HttpConfiguration(baseHttpConfiguration);
             httpsConfiguration.addCustomizer(new SecureRequestCustomizer());
 
-            SslContextFactory.Server sslContextFactory = new SslContextFactory.Server();
+            ReloadableSslContextFactory.Server sslContextFactory = new ReloadableSslContextFactory.Server();
             Optional<KeyStore> pemKeyStore = tryLoadPemKeyStore(config);
             if (pemKeyStore.isPresent()) {
                 sslContextFactory.setKeyStore(pemKeyStore.get());
@@ -290,7 +290,7 @@ public class HttpServer
             if (config.isHttpsEnabled()) {
                 adminConfiguration.addCustomizer(new SecureRequestCustomizer());
 
-                SslContextFactory.Server sslContextFactory = new SslContextFactory.Server();
+                ReloadableSslContextFactory.Server sslContextFactory = new ReloadableSslContextFactory.Server();
                 sslContextFactory.setKeyStorePath(config.getKeystorePath());
                 sslContextFactory.setKeyStorePassword(config.getKeystorePassword());
                 if (config.getKeyManagerPassword() != null) {

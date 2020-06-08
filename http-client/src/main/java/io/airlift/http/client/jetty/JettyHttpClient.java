@@ -18,6 +18,7 @@ import io.airlift.http.client.spnego.SpnegoAuthentication;
 import io.airlift.http.client.spnego.SpnegoAuthenticationProtocolHandler;
 import io.airlift.http.client.spnego.SpnegoAuthenticationStore;
 import io.airlift.security.pem.PemReader;
+import io.airlift.security.ssl.ReloadableSslContextFactory;
 import io.airlift.units.Duration;
 import org.eclipse.jetty.client.DuplexConnectionPool;
 import org.eclipse.jetty.client.HttpClient;
@@ -43,7 +44,6 @@ import org.eclipse.jetty.io.ConnectionStatistics;
 import org.eclipse.jetty.io.MappedByteBufferPool;
 import org.eclipse.jetty.util.HttpCookieStore;
 import org.eclipse.jetty.util.component.LifeCycle;
-import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ScheduledExecutorScheduler;
 import org.eclipse.jetty.util.thread.Scheduler;
@@ -157,7 +157,7 @@ public class JettyHttpClient
 
         creationLocation.fillInStackTrace();
 
-        SslContextFactory.Client sslContextFactory = new SslContextFactory.Client();
+        ReloadableSslContextFactory.Client sslContextFactory = new ReloadableSslContextFactory.Client();
         sslContextFactory.setEndpointIdentificationAlgorithm("HTTPS");
         if (config.getKeyStorePath() != null) {
             Optional<KeyStore> pemKeyStore = tryLoadPemKeyStore(config);
